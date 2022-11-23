@@ -15,6 +15,13 @@ class Wallet:
     def create_wallet(name, init_amount):
         Wallet(name, init_amount)
 
+    @staticmethod
+    def remove_wallet(index):
+        df = pd.read_csv("wallets.csv")
+        df_modified = df.drop(index)
+        df_modified.to_csv('wallets.csv', index=False, header=True)
+        
+
     @classmethod
     def wallet_display(cls):
         df = pd.read_csv('wallets.csv')
@@ -60,79 +67,56 @@ class Wallet:
 
 # starts the app 
 def start_app():
-    value = input("""
-    Press 1 to create a wallet
-    Press 2 to display the existing wallets
-    Press 3 to add money to your wallet
-    Press 4 to subtract money from your wallet
-    Press q to quit
-    """)
     Wallet.init_database()
-    while value != "q":
+    while True:
+        value = input("""
+        Press 1 to create a wallet
+        Press 2 to display the existing wallets
+        Press 3 to add money to your wallet
+        Press 4 to subtract money from your wallet
+        Press 5 to remove a wallet
+        Press q to quit
+        """)
         if value == "1":
             name = input("Please enter the wallet name: ")
             init_amount = int(input("Please enter the initial wallet amount: "))
             Wallet.init_database()
             Wallet.create_wallet(name, init_amount)
             Wallet.add_to_database()
-            value = input("""
-            Press 1 to create a wallet
-            Press 2 to display the existing wallets
-            Press 3 to add money to your wallet
-            Press 4 to subtract money from your wallet
-            Press q to quit
-            """)
 
         elif value == "2":
             df = pd.read_csv('wallets.csv')
-
             if df.empty:
                 print("no wallets registerd")
-                value = input("""
-            Press 1 to create a wallet
-            Press 2 to display the existing wallets
-            Press 3 to add money to your wallet
-            Press 4 to subtract money from your wallet
-            Press q to quit
-            """)
+    
             else:
                 Wallet.wallet_display()
-                value = input("""
-            Press 1 to create a wallet
-            Press 2 to display the existing wallets
-            Press 3 to add money to your wallet
-            Press 4 to subtract money from your wallet
-            Press q to quit
-            """)
 
         elif value == "3":
             Wallet.wallet_display()
             index = int(input("enter the index of the wallet you want to modify: "))
             amount = int(input("how much do you want to add? "))
             Wallet.add_amount(index, amount)
-            value = input("""
-            Press 1 to create a wallet
-            Press 2 to display the existing wallets
-            Press 3 to add money to your wallet
-            Press 4 to subtract money from your wallet
-            Press q to quit
-            """)
 
         elif value == "4":
             Wallet.wallet_display()
             index = int(input("enter the index of the wallet you want to modify: "))
             amount = int(input("how much did you spend? "))
             Wallet.subtract_amount(index, amount)
-            value = input("""
-            Press 1 to create a wallet
-            Press 2 to display the existing wallets
-            Press 3 to add money to your wallet
-            Press 4 to subtract money from your wallet
-            Press q to quit
-            """)
+        
+        elif value == "5":
+            Wallet.wallet_display()
+            index = int(input("Enter the index of the wallet you want to remove: "))
+            Wallet.remove_wallet(index)
+            Wallet.wallet_display()
+
+
+        elif value == "q":
+            break
 
         else:
-            value = input("Enter a valid input: ")
+            print("Invalid input")
+            break
 
 
 start_app()
